@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profit Content System – نظام المحتوى اللي يبيع</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --white: #ffffff;
+      --black: #0a0a0a;
+      --accent: #BE3455;
+      --gray-100: #f6f6f6;
+      --gray-200: #e8e8e8;
+      --gray-400: #aaa;
+      --gray-600: #555;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .nav-btn {
+      background: var(--black); color: var(--white);
+      text-decoration: none; padding: 9px 18px;
+      border-radius: 100px; font-size: 13px; font-weight: 600;
+    }
+    .nav-btn:active { background: var(--accent); }
+
+    /* ── BUTTONS ── */
+    .btn-black {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--black); color: var(--white); text-decoration: none;
+      padding: 16px 28px; border-radius: 100px; font-size: 16px; font-weight: 700;
+      width: 100%; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-black:active { background: var(--accent); transform: scale(0.98); }
+
+    .btn-accent {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--accent); color: var(--white); text-decoration: none;
+      padding: 16px 28px; border-radius: 100px; font-size: 16px; font-weight: 700;
+      width: 100%; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-accent:active { background: #9e2a45; transform: scale(0.98); }
+
+    /* ── HERO ── */
+    #hero {
+      padding: 110px 20px 64px;
+      text-align: center;
+      background: radial-gradient(ellipse 130% 50% at 50% 0%, rgba(190,52,85,0.08) 0%, transparent 65%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--black); color: var(--white);
+      border-radius: 100px; padding: 6px 14px 6px 8px;
+      font-size: 12px; font-weight: 500; margin-bottom: 22px;
+      opacity: 0; transform: translateY(16px);
+      animation: up 0.5s ease 0.1s forwards;
+    }
+    .dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+
+    .hero-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px; display: block;
+      opacity: 0; transform: translateY(16px); animation: up 0.5s ease 0.15s forwards;
+    }
+    .hero-title {
+      font-size: 38px; font-weight: 800; line-height: 1.1; letter-spacing: -0.025em;
+      opacity: 0; transform: translateY(20px); animation: up 0.6s ease 0.25s forwards;
+    }
+    .hero-title .hi { color: var(--accent); }
+    .hero-en {
+      font-size: 14px; color: var(--gray-400); font-weight: 500; margin-top: 8px;
+      letter-spacing: 0.05em;
+      opacity: 0; transform: translateY(14px); animation: up 0.5s ease 0.35s forwards;
+    }
+    .hero-sub {
+      font-size: 15px; color: var(--gray-600); line-height: 1.75; margin: 18px auto 0; max-width: 340px;
+      opacity: 0; transform: translateY(14px); animation: up 0.6s ease 0.4s forwards;
+    }
+    .hero-cta { margin-top: 28px; opacity: 0; transform: translateY(14px); animation: up 0.6s ease 0.52s forwards; }
+    .trust-line { margin-top: 14px; font-size: 13px; color: var(--gray-400); display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .trust-line .stars { color: var(--accent); }
+    @keyframes up { to { opacity:1; transform:translateY(0); } }
+
+    /* ── SECTION COMMONS ── */
+    .sec { padding: 56px 20px; }
+    .sec-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .sec-title { font-size: 26px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .sec-desc { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+
+    /* ── PAIN ── */
+    #pain { padding: 0 20px 56px; }
+    .pain-box {
+      background: var(--black); border-radius: 20px; padding: 40px 24px;
+      position: relative; overflow: hidden;
+    }
+    .pain-box::before {
+      content: ''; position: absolute; top: -60px; left: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(190,52,85,0.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .pain-box .sec-label { color: rgba(255,255,255,0.45); }
+    .pain-box .sec-title { color: var(--white); margin-bottom: 28px; font-size: 24px; }
+    .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pain-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px 12px; }
+    .pain-card .emoji { font-size: 22px; margin-bottom: 7px; }
+    .pain-card p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
+
+    /* ── CREDIBILITY ── */
+    #cred { padding: 56px 20px 0; }
+    .cred-box {
+      background: var(--gray-100); border-radius: 20px; padding: 36px 24px;
+      position: relative; overflow: hidden;
+    }
+    .cred-box::after {
+      content: ''; position: absolute; bottom: -40px; right: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(190,52,85,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cred-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px;
+    }
+    .cred-stat {
+      background: var(--white); border-radius: 14px; padding: 18px 14px; text-align: center;
+      border: 1.5px solid var(--gray-200);
+    }
+    .cred-num { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--accent); }
+    .cred-num span { color: var(--accent); }
+    .cred-lbl { font-size: 12px; color: var(--gray-400); margin-top: 5px; line-height: 1.4; }
+
+    /* ── FEATURES (WHAT YOU LEARN) ── */
+    .learn-list { display: flex; flex-direction: column; gap: 1px; margin-top: 24px; background: var(--gray-200); border-radius: 16px; overflow: hidden; }
+    .learn-item {
+      background: var(--white); padding: 18px 18px;
+      display: flex; gap: 14px; align-items: flex-start;
+      transition: background 0.15s;
+    }
+    .learn-item:active { background: #fdf5f7; }
+    .learn-check { color: var(--accent); font-size: 16px; min-width: 20px; padding-top: 1px; }
+    .learn-item p { font-size: 15px; font-weight: 500; line-height: 1.55; }
+
+    /* ── WHO IS IT FOR ── */
+    #for { padding: 56px 20px; }
+    .for-list { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+    .for-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 18px 16px; border: 1.5px solid var(--gray-200); border-radius: 14px;
+    }
+    .for-icon { font-size: 22px; min-width: 32px; }
+    .for-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .for-item p { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+
+    /* ── WHAT'S INCLUDED ── */
+    #includes { padding: 0 20px 56px; }
+    .includes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+    .inc-card {
+      background: var(--black); border-radius: 14px; padding: 20px 16px;
+      position: relative; overflow: hidden;
+    }
+    .inc-card::before {
+      content: ''; position: absolute; top: -30px; right: -30px; width: 80px; height: 80px;
+      background: radial-gradient(circle, rgba(190,52,85,0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .inc-icon { font-size: 24px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .inc-card h4 { font-size: 14px; font-weight: 700; color: var(--white); line-height: 1.4; position: relative; z-index: 1; }
+
+    .bonus-box { background: var(--accent); border-radius: 16px; padding: 24px 20px; margin-top: 14px; }
+    .bonus-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+    .bonus-items { display: flex; flex-direction: column; gap: 8px; }
+    .bonus-item { display: flex; gap: 10px; align-items: flex-start; }
+    .bonus-item span { font-size: 13px; color: rgba(255,255,255,0.9); line-height: 1.5; }
+
+    /* ── WHY DIFFERENT ── */
+    #why { padding: 0 20px 56px; }
+    .why-list { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+    .why-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px 16px; background: var(--gray-100); border-radius: 14px;
+    }
+    .why-bullet { color: var(--accent); font-size: 18px; font-weight: 800; min-width: 20px; }
+    .why-item p { font-size: 14px; color: var(--black); line-height: 1.6; font-weight: 500; }
+
+    /* ── STATS ── */
+    #stats { background: var(--gray-100); padding: 40px 20px; }
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: var(--gray-200); border-radius: 16px; overflow: hidden;
+    }
+    .stat-cell { background: var(--white); padding: 22px 14px; text-align: center; }
+    .stat-num { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--accent); }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--gray-400); margin-top: 5px; line-height: 1.4; }
+
+    /* ── PRODUCT CARD ── */
+    .product-card {
+      background: var(--black); border-radius: 20px; padding: 36px 24px;
+      text-align: center; margin-top: 32px; position: relative; overflow: hidden;
+    }
+    .product-card::before {
+      content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(190,52,85,0.4) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .product-tag {
+      display: inline-block; background: var(--accent); color: var(--white);
+      border-radius: 100px; padding: 5px 14px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; position: relative; z-index: 1;
+    }
+    .product-card h3 { font-size: 20px; font-weight: 800; color: var(--white); line-height: 1.3; margin-bottom: 20px; position: relative; z-index: 1; }
+    .price { font-size: 52px; font-weight: 800; color: var(--white); letter-spacing: -0.03em; line-height: 1; position: relative; z-index: 1; }
+    .price-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 24px; margin-top: 6px; position: relative; z-index: 1; }
+    .product-card .btn-accent { max-width: 100%; position: relative; z-index: 1; }
+    .trust-badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; position: relative; z-index: 1; }
+    .badge { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.55); border-radius: 100px; padding: 5px 12px; font-size: 11px; }
+
+    /* ── REVIEWS ── */
+    .reviews-list { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+    .review-card { border: 1.5px solid var(--gray-200); border-radius: 16px; padding: 22px 18px; }
+    .review-stars { color: var(--accent); font-size: 14px; letter-spacing: 2px; margin-bottom: 10px; }
+    .review-text { font-size: 14px; line-height: 1.7; color: var(--black); margin-bottom: 16px; }
+    .review-author { display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--gray-200); padding-top: 14px; }
+    .author-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: var(--white); flex-shrink: 0; }
+    .author-name { font-size: 14px; font-weight: 700; }
+    .author-title { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+
+    /* ── RESULT SECTION ── */
+    #result { padding: 0 20px 56px; }
+    .result-box {
+      border: 2px solid var(--accent); border-radius: 20px; padding: 32px 24px; text-align: center;
+      background: linear-gradient(135deg, rgba(190,52,85,0.04) 0%, transparent 60%);
+    }
+    .result-box .emoji-big { font-size: 40px; margin-bottom: 16px; }
+    .result-box h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; line-height: 1.2; }
+    .result-box p { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+
+    /* ── FAQ ── */
+    #faq { padding: 48px 20px 56px; }
+    .faq-item { border-bottom: 1px solid var(--gray-200); }
+    .faq-q { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; font-size: 15px; font-weight: 600; cursor: pointer; gap: 12px; user-select: none; }
+    .faq-icon { width: 26px; height: 26px; background: var(--black); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: background 0.2s, transform 0.3s; line-height: 1; }
+    .faq-item.open .faq-icon { background: var(--accent); transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s; font-size: 14px; color: var(--gray-600); line-height: 1.7; }
+    .faq-item.open .faq-a { max-height: 200px; padding-bottom: 18px; }
+
+    /* ── FINAL CTA ── */
+    #final-cta { padding: 0 20px 80px; }
+    .final-box {
+      background: var(--black); border-radius: 20px; padding: 48px 24px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .final-box::before {
+      content: ''; position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
+      width: 260px; height: 200px;
+      background: radial-gradient(circle, rgba(190,52,85,0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .final-box .sec-label { color: rgba(255,255,255,0.45); }
+    .final-box h2 { font-size: 26px; font-weight: 800; color: var(--white); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 12px; position: relative; z-index: 1; }
+    .final-box h2 .hi { color: var(--accent); }
+    .final-box p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 28px; position: relative; z-index: 1; }
+    .final-box .btn-accent { max-width: 100%; position: relative; z-index: 1; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--gray-200); padding: 24px 20px 80px; text-align: center; font-size: 12px; color: var(--gray-400); }
+    footer a { color: var(--gray-600); text-decoration: none; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── STICKY CTA ── */
+    .sticky-cta {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 20px 18px; background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(10px); border-top: 1px solid var(--gray-200);
+      z-index: 90; transform: translateY(100%); transition: transform 0.35s ease;
+    }
+    .sticky-cta.show { transform: translateY(0); }
+    .sticky-cta a { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--black); color: var(--white); text-decoration: none; padding: 15px; border-radius: 14px; font-size: 15px; font-weight: 700; }
+    .sticky-cta a:active { background: var(--accent); }
+
+    /* divider */
+    .divider { height: 1px; background: var(--gray-200); margin: 0 20px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <!-- Single logo: text version (Layer_1) -->
+  <svg viewBox="0 0 802 303" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:16px;width:auto">
+    <g clip-path="url(#c)">
+      <path d="M322.772 180.632C313.712 175.407 302.715 172.725 289.782 172.725C276.849 172.725 265.783 175.407 256.654 180.77C255.755 181.32 254.925 181.939 254.095 182.558C251.467 184.002 248.631 185.721 245.104 187.921C240.055 191.084 234.315 194.728 227.952 198.029C219.307 202.292 211.353 204.355 205.267 204.011C206.65 201.398 207.965 198.785 209.279 196.104C236.528 141.37 263.778 65.1826 259.351 27.2953C257.761 15.3309 253.542 7.0108 246.556 2.40381C243.098 0.272222 233.831-3.50963 222.627 7.56089C217.509 12.9243 211.976 20.9005 206.305 31.2147C184.934 70.2022 159.967 145.152 168.75 184.758C170.894 193.491 173.799 200.642 177.603 206.487C168.335 223.333 158.238 239.079 148.348 252.075C130.02 275.591 119.092 280.13 114.044 280.749C112.591 280.955 111.623 280.817 110.655 280.473C105.399 277.861 105.122 244.305 137.697 156.979C138.458 154.916 138.319 155.191 138.25 155.397C139.564 151.409 137.973 146.527 134.308 143.089C131.68 140.338 128.291 138.894 125.04 139.17C122.412 139.445 120.13 140.751 118.816 142.951C118.678 143.158 118.47 143.433 118.263 143.845C91.3589 185.514 73.377 205.73 65.0777 211.712C66.8067 202.705 72.4087 185.102 76.7659 171.556L77.1808 170.181C88.0391 136.35 99.2432 101.42 81.3997 85.6047C68.9507 74.6029 52.2137 72.0588 37.5515 78.8661C18.1864 88.1488 4.69998 110.978 0.481156 127.686C-1.17871 132.568 1.93354 137.794 5.3916 140.407C8.43469 143.089 11.9619 144.12 15.1433 143.295C17.8406 142.608 19.9846 140.545 20.8837 137.932L21.022 137.519C24.7567 123.423 37.8973 107.883 51.5221 101.42C54.5652 99.9757 64.801 95.6438 70.1264 100.388C73.8611 106.371 62.8645 140.476 56.9858 158.835L56.1559 161.448C46.335 192.184 37.8282 218.795 53.4586 230.69C56.8475 233.235 60.928 234.197 65.4235 233.578C69.0198 233.028 78.0799 231.722 97.1684 210.956C84.8577 261.014 87.7625 290.788 105.814 299.52C109.548 301.514 113.698 302.477 117.778 302.477C118.747 302.477 119.784 302.477 120.752 302.271C133.962 300.758 148.763 289.412 165.984 267.478C175.459 255.238 185.28 240.111 195.239 222.302C205.406 227.184 217.301 227.734 229.612 224.158C228.99 228.353 228.575 232.616 228.575 237.223C228.575 250.15 230.926 261.495 235.698 271.122C240.47 280.749 247.386 288.175 256.516 293.401C265.645 298.626 276.642 301.308 289.644 301.308C302.646 301.308 313.574 298.626 322.634 293.332C331.694 287.968 338.541 280.473 343.244 270.778C347.947 261.083 350.298 249.737 350.298 236.81C350.298 223.883 347.947 212.538 343.244 202.911C338.541 193.284 331.625 185.858 322.634 180.632H322.772ZM189.429 183.658C183.205 152.44 203.123 84.9171 225.462 44.4168C230.511 35.4091 234.73 29.1519 238.188 25.4388C241.231 54.9373 220.898 121.154 189.499 183.658H189.429ZM317.585 262.114C315.303 268.715 311.845 273.666 307.211 277.035C302.577 280.405 296.767 282.055 289.782 282.055C282.797 282.055 276.918 280.405 272.215 277.035C267.512 273.666 263.985 268.715 261.564 262.114C259.144 255.513 257.968 247.331 257.968 237.567C257.968 227.803 259.144 219.551 261.426 212.744C263.778 206.005 267.236 200.848 271.869 197.41C276.503 193.972 282.382 192.184 289.506 192.116C296.56 192.116 302.369 193.835 307.003 197.273C311.637 200.711 315.095 205.799 317.447 212.538C319.729 219.276 320.905 227.527 320.905 237.292C320.905 247.056 319.798 255.513 317.516 262.114H317.585Z" fill="black"/>
+      <path d="M466.835 221.068C466.835 205.459 463.031 193.564 455.285 185.243C447.608 176.923 437.303 172.798 424.439 172.798C418.284 172.798 412.612 173.76 407.494 175.686C402.307 177.611 397.743 180.224 393.801 183.456C389.858 186.687 386.539 190.263 383.911 194.114L384.533 177.267C384.533 176.167 383.98 175.617 382.942 175.617H358.252C357.145 175.617 356.592 176.167 356.592 177.267L356.73 241.077L356.246 296.774C356.246 297.874 356.799 298.424 357.906 298.424H384.187C385.294 298.424 385.847 297.874 385.847 296.774L385.501 246.097V231.657C386.331 223.2 388.199 216.255 391.172 210.685C394.146 205.115 397.812 200.99 402.169 198.239C406.526 195.489 411.16 194.114 416.001 194.114C422.572 194.114 427.966 196.452 432.116 201.059C436.335 205.734 438.41 212.61 438.41 221.756V246.097L437.925 296.774C437.925 297.874 438.479 298.424 439.585 298.424H465.521C466.627 298.424 467.181 297.874 467.181 296.774L466.835 246.097V221.068Z" fill="black"/>
+      <path d="M588.627 131.472H563.107C562 131.472 561.447 132.022 561.447 133.122L561.585 191.569C557.505 185.518 552.318 180.911 546.093 177.817C539.869 174.654 532.676 173.141 524.515 173.141C513.449 173.141 504.043 176.029 496.159 181.874C488.275 187.65 482.258 195.42 478.039 205.115C473.82 214.81 471.745 225.537 471.745 237.295C471.745 249.053 473.751 259.986 477.693 269.613C481.635 279.239 487.514 286.872 495.26 292.441C503.006 298.08 512.619 300.83 524.031 300.83C532.538 300.83 539.938 299.042 546.301 295.536C552.664 292.029 557.92 287.147 562.07 280.958L561.447 296.842C561.447 297.942 562 298.492 563.038 298.492H588.697C589.803 298.492 590.356 297.942 590.356 296.842L590.149 209.997L590.356 133.191C590.356 132.091 589.803 131.541 588.697 131.541L588.627 131.472ZM554.393 270.713C548.998 278.002 541.46 281.646 531.777 281.646C524.999 281.715 519.328 279.927 514.763 276.214C510.199 272.501 506.81 267.275 504.527 260.399C502.245 253.591 501.139 245.34 501.139 235.851C501.139 226.843 502.314 219.073 504.597 212.541C506.879 206.009 510.406 200.92 514.971 197.482C519.535 193.976 525.414 192.257 532.399 192.325C542.151 192.394 549.69 196.451 554.946 204.358C560.202 212.335 562.761 223.612 562.623 238.258C562.554 252.629 559.787 263.493 554.393 270.782V270.713Z" fill="black"/>
+      <path d="M656.271 172.726C643.684 172.726 632.964 175.408 623.904 180.771C614.913 186.134 607.997 193.698 603.155 203.462C598.314 213.226 595.894 224.503 595.894 237.43C595.894 250.357 598.245 260.946 602.879 270.573C607.582 280.199 614.429 287.763 623.558 293.195C632.687 298.627 643.891 301.378 657.17 301.378C668.374 301.378 677.988 299.453 686.08 295.533C694.171 291.614 700.604 286.388 705.306 279.787C710.009 273.186 712.983 265.76 714.021 257.577C714.159 256.752 713.606 256.408 712.361 256.408H687.74C686.771 256.408 686.218 256.889 686.08 257.852C684.42 265.966 681.169 272.017 676.328 276.074C671.487 280.131 665.262 282.125 657.585 282.125C650.738 282.125 644.929 280.681 640.157 277.793C635.454 274.905 631.788 270.504 629.229 264.591C626.67 258.677 625.218 251.182 624.941 242.037H715.127C716.234 242.037 716.787 241.487 716.787 240.387C716.58 219.415 711.185 202.912 700.673 190.879C690.16 178.846 675.36 172.863 656.202 172.863L656.271 172.726ZM625.771 223.334C627.224 213.226 630.474 205.456 635.523 200.093C640.572 194.729 647.557 191.979 656.34 191.979C662.634 191.979 667.959 193.423 672.178 196.311C676.397 199.199 679.648 203.05 681.861 207.794C684.074 212.539 685.388 217.764 685.734 223.265H625.771V223.334Z" fill="black"/>
+      <path d="M800.332 175.268C799.295 175.061 798.188 174.855 797.013 174.718C795.837 174.58 794.661 174.511 793.347 174.511C787.399 174.511 781.797 175.336 776.403 177.055C771.008 178.774 766.029 181.319 761.602 184.688C757.107 188.057 753.372 192.252 750.329 197.271L751.159 177.262C751.159 176.162 750.606 175.611 749.568 175.611H724.117C723.01 175.611 722.457 176.162 722.457 177.262L723.149 236.327L722.457 296.768C722.457 297.869 723.01 298.419 724.117 298.419H749.568C750.675 298.419 751.228 297.869 751.228 296.768L751.09 237.84C751.297 228.557 753.372 220.856 757.314 214.668C761.256 208.548 766.374 203.941 772.806 200.915C779.169 197.821 786.293 196.308 794.039 196.308C795.076 196.308 796.114 196.308 797.151 196.446C798.188 196.584 799.157 196.652 800.056 196.79C801.232 196.927 801.854 196.446 801.854 195.208V177.055C801.854 176.024 801.301 175.405 800.263 175.13L800.332 175.268Z" fill="black"/>
+    </g>
+    <defs><clipPath id="c"><rect width="801.923" height="302.48" fill="white"/></clipPath></defs>
+  </svg>
+  <a href="https://bywonder.gumroad.com/l/mm" class="nav-btn">احصل عليه</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-badge"><span class="dot"></span> متوفر الحين</div>
+  <span class="hero-label">Profit Content System</span>
+  <h1 class="hero-title">نظام المحتوى<br>المربح في <span class="hi">ساعة</span></h1>
+  <p class="hero-en">By Wonder Lujain</p>
+  <p class="hero-sub">كم مرة نزّلت محتوى تعبت عليه بس ما جاب لا مشاهدات ولا مبيعات؟ هذا النظام مصمم عشان يحل مشكلتك بالخطوات، ومطبّق مع عملاء من مختلف المجالات.</p>
+  <div class="hero-cta">
+    <a href="https://bywonder.gumroad.com/l/mm" class="btn-black">احصل على النظام بـ 499 ريال ←</a>
+    <div class="trust-line"><span class="stars">★★★★★</span><span>أكثر من 182 شخص استفادوا</span></div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section id="pain">
+  <div class="pain-box reveal">
+    <span class="sec-label">هل تحس بكذا؟</span>
+    <h2 class="sec-title">تنشر.. بس ما تشوف نتيجة</h2>
+    <div class="pain-grid">
+      <div class="pain-card"><div class="emoji">😩</div><p>تشتغل على محتوى ساعات وما يوصل لأحد</p></div>
+      <div class="pain-card"><div class="emoji">🤔</div><p>ما تعرف كيف تحوّل فكرتك لمحتوى يشدّ</p></div>
+      <div class="pain-card"><div class="emoji">💸</div><p>مشاهدات بدون مبيعات وتعبت من المجهود بلا نتيجة</p></div>
+      <div class="pain-card"><div class="emoji">🔁</div><p>تبدأ وتوقف ولا تعرف من وين تكمل</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDIBILITY -->
+<section id="cred">
+  <div class="cred-box reveal">
+    <span class="sec-label">ليش تثق بالنظام؟</span>
+    <h2 class="sec-title">مبني على تجربة حقيقية<br>مو كلام نظري</h2>
+    <div class="cred-stats">
+      <div class="cred-stat"><div class="cred-num">+<span>7</span></div><div class="cred-lbl">سنوات خبرة في التسويق والمحتوى</div></div>
+      <div class="cred-stat"><div class="cred-num">+<span>38</span></div><div class="cred-lbl">متدرب تدرّب على النظام</div></div>
+      <div class="cred-stat"><div class="cred-num"><span>3</span>M+</div><div class="cred-lbl">ريال مبيعات تحققت للعملاء</div></div>
+      <div class="cred-stat"><div class="cred-num"><span>5</span>M+</div><div class="cred-lbl">مشاهدة للبوست الواحد</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU LEARN -->
+<section class="sec" id="features">
+  <span class="sec-label reveal">وش راح تتعلم</span>
+  <h2 class="sec-title reveal">خطوات تخلي محتواك<br>موظف مبيعات ذكي</h2>
+  <p class="sec-desc reveal">من الفكرة إلى أول بيع، هذا النظام يعلمك وش تنزل، ليه تنزله، وكيف تخليه يبيع.</p>
+  <div class="learn-list reveal">
+    <div class="learn-item"><span class="learn-check">✓</span><p>ليه محتواك ما يجيب مبيعات وكيف تصلحها</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>كيف تعرف عميلك الحقيقي وتتكلم بلغته</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>كيف تحدد رسالتك التسويقية اللي تبيع</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>كيف تبني هوكات ذكية وتجذب الانتباه</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>أنواع المحتوى اللي كل بزنس يحتاجها</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>طريقة تخطيط المحتوى خطوة بخطوة</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>أمثلة من بزنس حقيقية ونتائج حقيقية</p></div>
+    <div class="learn-item"><span class="learn-check">✓</span><p>تمبلت تطبيقي تبني فيه خطتك بنفسك</p></div>
+  </div>
+</section>
+
+<!-- WHO IS IT FOR -->
+<section id="for">
+  <span class="sec-label reveal">مناسب لك إذا كنت</span>
+  <h2 class="sec-title reveal">هذا النظام لك</h2>
+  <div class="for-list">
+    <div class="for-item reveal"><div class="for-icon">🏢</div><div><h4>صاحب بزنس</h4><p>تعاني من قلة المبيعات وتبي محتوى يشتغل لك حتى وأنت غايب</p></div></div>
+    <div class="for-item reveal"><div class="for-icon">🎥</div><div><h4>صانع محتوى</h4><p>تعبت من المجهود بدون نتيجة وتبي تحوّل مشاهداتك لدخل حقيقي</p></div></div>
+    <div class="for-item reveal"><div class="for-icon">📊</div><div><h4>موظف تسويق</h4><p>تبي تطور مهاراتك بشكل يوصلك لترقية في وظيفتك</p></div></div>
+    <div class="for-item reveal"><div class="for-icon">🚀</div><div><h4>ناوي تبدأ بزنس</h4><p>مو عارف من وين تبدأ بالمحتوى وتبي خارطة طريق واضحة</p></div></div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section id="includes">
+  <span class="sec-label reveal">وش يشمل النظام</span>
+  <h2 class="sec-title reveal">كل اللي تحتاجه في مكان واحد</h2>
+  <div class="includes-grid reveal">
+    <div class="inc-card"><div class="inc-icon">🎧</div><h4>فيديوهات مسجلة تشوفها وقت ما تبي</h4></div>
+    <div class="inc-card"><div class="inc-icon">🧠</div><h4>أمثلة حقيقية من مجالات مختلفة</h4></div>
+    <div class="inc-card"><div class="inc-icon">🔒</div><h4>أسرار المهنة اللي محد بيقولها لك</h4></div>
+    <div class="inc-card"><div class="inc-icon">🗓️</div><h4>خطة تنفيذ شهرية خطوة بخطوة</h4></div>
+  </div>
+  <div class="bonus-box reveal">
+    <div class="bonus-title">✨ إضافات مجانية معه</div>
+    <div class="bonus-items">
+      <div class="bonus-item"><span>📘</span><span>تمبلت جاهزة لتخطيط المحتوى</span></div>
+      <div class="bonus-item"><span>📚</span><span>ملفات مهمة تساعدك في التطبيق</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY DIFFERENT -->
+<section id="why">
+  <span class="sec-label reveal">ليش هالنظام مختلف</span>
+  <h2 class="sec-title reveal">مو بس "وش تنزل"<br>يعلمك "ليش الناس تشتري"</h2>
+  <div class="why-list">
+    <div class="why-item reveal"><span class="why-bullet">↗</span><p>ما فيه تنظير، كله عملي من تجربة حقيقية مع عملاء فعليين</p></div>
+    <div class="why-item reveal"><span class="why-bullet">↗</span><p>الزبدة والخلاصة فقط، بدون حشو أو تضييع وقت</p></div>
+    <div class="why-item reveal"><span class="why-bullet">↗</span><p>اختصار لـ 7 سنوات من الخبرة في ساعة بس</p></div>
+    <div class="why-item reveal"><span class="why-bullet">↗</span><p>أسرار محد بيعلمك عليها بالمجال</p></div>
+    <div class="why-item reveal"><span class="why-bullet">↗</span><p>تقدر تطبقه على أي مشروع: منتج، خدمة، أو براند شخصي</p></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid reveal">
+    <div class="stat-cell"><div class="stat-num">+<span>182</span></div><div class="stat-label">شخص طبّق النظام</div></div>
+    <div class="stat-cell"><div class="stat-num"><span>5</span>★</div><div class="stat-label">متوسط التقييم</div></div>
+    <div class="stat-cell"><div class="stat-num"><span>12</span></div><div class="stat-label">عميل تم العمل معهم</div></div>
+    <div class="stat-cell"><div class="stat-num"><span>1</span>hr</div><div class="stat-label">كافية تغيّر طريقة تفكيرك</div></div>
+  </div>
+</section>
+
+<!-- PRODUCT CARD + GET -->
+<section class="sec" id="get" style="padding-top:40px">
+  <span class="sec-label reveal">السعر والتفاصيل</span>
+  <h2 class="sec-title reveal">استثمار في محتوى<br>يشتغل وأنت نايم</h2>
+  <div class="product-card reveal">
+    <div class="product-tag">Profit Content System</div>
+    <h3>نظام المحتوى المربح<br>في ساعة واحدة</h3>
+    <div class="price">٤٩٩ ريال</div>
+    <div class="price-sub">دفعة واحدة، وصول كامل للأبد</div>
+    <a href="https://bywonder.gumroad.com/l/mm" class="btn-accent">احصل على النظام الحين ←</a>
+    <div class="trust-badges">
+      <span class="badge">✓ دفع آمن</span>
+      <span class="badge">✓ وصول فوري</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result">
+  <div class="result-box reveal">
+    <div class="emoji-big">🎯</div>
+    <h3>النتيجة اللي راح توصلها</h3>
+    <p>بعد ما تتبع خطوات النظام، بتعرف وش تنزل، ليه تنزله، وكيف تخليه يبيع. وبتبدأ تشوف محتواك يتحول من "مشاهدات" إلى "دخل فعلي".</p>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec" id="reviews" style="padding-top:0">
+  <span class="sec-label reveal">آراء حقيقية</span>
+  <h2 class="sec-title reveal">ناس زيّك جرّبوا وحكوا</h2>
+  <div class="reviews-list">
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">والله كنت أكتب محتوى كثير بس ما أشوف نتيجة. بعد ما طبّقت خطوات النظام، بدأت أجيني رسائل من ناس تسأل عن خدماتي بشكل مختلف تماماً. المحتوى صار يشتغل وحده!</p>
+      <div class="review-author"><div class="author-avatar" style="background:var(--accent);">م</div><div><div class="author-name">محمد الغامدي</div><div class="author-title">كوتش تطوير ذاتي</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">أحسن استثمار سويته هالسنة. النظام واضح، عملي، ومو فيه كلام فاضي. كل خطوة قابلة للتطبيق من نفس اليوم. شكراً!</p>
+      <div class="review-author"><div class="author-avatar" style="background:#1a1a2e;">س</div><div><div class="author-name">سارة المطيري</div><div class="author-title">فري لانسر، تصميم جرافيك</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">جزء الهوكات غيّر طريقة تفكيري كليًّا. كنت أكتب عناوين عشوائية. الحين أفكر في العميل أول شيء. الاداء تحسّن جداً خلال أسبوع.</p>
+      <div class="review-author"><div class="author-avatar" style="background:#2d4a22;">ع</div><div><div class="author-name">عبدالله الشهري</div><div class="author-title">صاحب متجر إلكتروني</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">أخيراً فهمت ليش بعض الناس تبيع بمحتوى بسيط وأنا مو قادر رغم إن محتواي "أحسن". المشكلة كانت في الطريقة مو في الكمية. النظام فتح عيني.</p>
+      <div class="review-author"><div class="author-avatar" style="background:#3d2b1f;">خ</div><div><div class="author-name">خالد الحربي</div><div class="author-title">مدرّب لياقة بدنية</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">ما توقعت إن ساعة وحدة تغيّر كل هذا. الجزء الخاص بمعرفة العميل وحده يساوي سعر النظام أضعاف. يستاهل كل ريال.</p>
+      <div class="review-author"><div class="author-avatar" style="background:#2c1654;">ر</div><div><div class="author-name">ريم السلمي</div><div class="author-title">استشارية تسويق رقمي</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">كنت موظفة تسويق وحاسة ما عندي ما يكفي. بعد النظام صار عندي فهم أعمق من كثير من الزملاء. المدير لاحظ فرق في شغلي خلال شهر.</p>
+      <div class="review-author"><div class="author-avatar" style="background:#1e3a5f;">ن</div><div><div class="author-name">نورة العتيبي</div><div class="author-title">موظفة تسويق رقمي</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <span class="sec-label reveal" style="display:block;text-align:center">أسئلة شائعة</span>
+  <h2 class="sec-title reveal" style="text-align:center">عندك سؤال؟</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)"><span>لمن هذا النظام؟</span><div class="faq-icon">+</div></div>
+    <div class="faq-a">لأي شخص يريد يستخدم المحتوى لبناء ثقة وتوليد دخل. سواء كنت صاحب بزنس، صانع محتوى، موظف تسويق، أو ناوي تبدأ مشروعك.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)"><span>هل أحتاج خبرة سابقة؟</span><div class="faq-icon">+</div></div>
+    <div class="faq-a">لا. النظام مبني من الأساس ومناسب للمبتدئين والمتقدمين على حد سواء. كل خطوة موضّحة بشكل عملي.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)"><span>وش الصيغة اللي يجيني فيها؟</span><div class="faq-icon">+</div></div>
+    <div class="faq-a">فيديوهات مسجلة تقدر تشوفها وقت ما تبي، مع ملفات وتمبلت تطبيقية تحمّلها وترجع لها في أي وقت.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)"><span>على أي نوع مشروع أقدر أطبق النظام؟</span><div class="faq-icon">+</div></div>
+    <div class="faq-a">على أي شيء. منتج رقمي، خدمة، متجر، براند شخصي، أو حتى حساب توعوي. النظام مرن ويتكيّف مع أي مجال.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)"><span>متى أشوف نتيجة؟</span><div class="faq-icon">+</div></div>
+    <div class="faq-a">ناس كثيرين لاحظوا فرق من أول شهر بعد ما طبّقوا النظام. النتيجة تتوقف على مدى تطبيقك، بس الأساليب فيه سريعة التأثير.</div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta">
+  <div class="final-box reveal">
+    <span class="sec-label">الخطوة اللي تغيّر كل شيء</span>
+    <h2>خلّ محتواك يشتغل<br><span class="hi">وأنت نايم</span></h2>
+    <p>النظام جاهز، ساعة وحدة كافية، والنتيجة أثبتها أكثر من 182 شخص قبلك.</p>
+    <a href="https://bywonder.gumroad.com/l/mm" class="btn-accent">احصل على النظام بـ 499 ريال ←</a>
+  </div>
+</section>
+
+<footer>
+  <p>جميع الحقوق محفوظة &copy; Wonder 2026 &nbsp;&middot;&nbsp; <a href="https://bywonder.gumroad.com">bywonder</a></p>
+</footer>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="stickyCta">
+  <a href="https://bywonder.gumroad.com/l/mm">احصل على النظام بـ 499 ريال ←</a>
+</div>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 60 + 'ms';
+    obs.observe(el);
+  });
+
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  const sticky = document.getElementById('stickyCta');
+  window.addEventListener('scroll', () => {
+    sticky.classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+
+  // Counter animation for cred stats
+  function animateCount(el, target) {
+    let n = 0; const step = target / 60;
+    const t = setInterval(() => {
+      n = Math.min(n + step, target);
+      el.textContent = Math.floor(n);
+      if (n >= target) clearInterval(t);
+    }, 16);
+  }
+
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const s = e.target.querySelectorAll('.stat-num span');
+        s[0] && animateCount(s[0], 200);
+        s[2] && animateCount(s[2], 12);
+      }
+    });
+  }, { threshold: 0.5 }).observe(document.querySelector('.stats-grid'));
+</script>
+</body>
+</html>
